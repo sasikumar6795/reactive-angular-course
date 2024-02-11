@@ -7,6 +7,8 @@ import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {CourseDialogComponent} from '../course-dialog/course-dialog.component';
 import { CourseService } from '../services/course-service';
 import { LoadingService } from '../services/loading.service';
+import { MessageService } from '../services/message.service';
+import { CoursesStore } from '../store/courses.store';
 
 
 @Component({
@@ -21,7 +23,7 @@ export class HomeComponent implements OnInit {
   advancedCourses$: Observable<Course[]>;
 
 
-  constructor(private courseService: CourseService, private loadingService: LoadingService) {
+  constructor(private coursesStore: CoursesStore) {
 
   }
 
@@ -42,23 +44,32 @@ export class HomeComponent implements OnInit {
    
 
 
-
   }
 
   reloadCourses() {
-    this.loadingService.loadingOn();
-    const courses$ = this.courseService.loadAllCourses().pipe(
-      map(courses => courses.sort(sortCoursesBySeqNo)),
-      finalize(() => this.loadingService.loadingOff())
-    );
+    // const courses$ = this.courseService.loadAllCourses().pipe(
+    //   map(courses => courses.sort(sortCoursesBySeqNo),
+    //   catchError(err => {
+    //     const message =  "could not load courses";
+    //     this.messageService.showErrors(err);
+    //     return throwError(err)
+    //   })
+    //   )
+    // );
 
-    this.beginnerCourses$ = courses$.pipe(
-      map(courses => courses.filter(course => course.category == "BEGINNER"))
-    )
+    // const showCourses$ = this.loadingService.showLoadingUntillCompleted(courses$);
 
-    this.advancedCourses$ = courses$.pipe(
-      map(courses => courses.filter(course => course.category == "ADVANCED"))
-    )
+    // this.beginnerCourses$ = showCourses$.pipe(
+    //   map(courses => courses.filter(course => course.category == "BEGINNER"))
+    // )
+
+    // this.advancedCourses$ = showCourses$.pipe(
+    //   map(courses => courses.filter(course => course.category == "ADVANCED"))
+    // )
+
+    
+    this.beginnerCourses$ = this.coursesStore.filterByCategory("BEGINNER");
+    this.advancedCourses$ = this.coursesStore.filterByCategory("ADVANCED");
   }
 
  

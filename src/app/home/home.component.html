@@ -6,7 +6,7 @@
     <mat-tab-group>
 
         <mat-tab label="Beginners">
-          <courses-card-list [courses]="beginnerCourses$ | async" (courseChanged) = "reloadCourses()">
+          <courses-card-list [courses]="beginnerCourses$ | async">
 
           </courses-card-list>
         </mat-tab>

@@ -7,11 +7,15 @@ import {catchError, filter, tap} from 'rxjs/operators';
 import {throwError} from 'rxjs';
 import { CourseService } from '../services/course-service';
 import { LoadingService } from '../services/loading.service';
+import { CoursesStore } from '../store/courses.store';
 
 @Component({
     selector: 'course-dialog',
     templateUrl: './course-dialog.component.html',
-    styleUrls: ['./course-dialog.component.css']
+    styleUrls: ['./course-dialog.component.css'],
+    providers:[
+        LoadingService
+    ]
 })
 export class CourseDialogComponent implements AfterViewInit {
 
@@ -21,9 +25,8 @@ export class CourseDialogComponent implements AfterViewInit {
     constructor(
         private fb: FormBuilder,
         private dialogRef: MatDialogRef<CourseDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) course:Course, 
-        private courseService: CourseService,
-        private loadingService: LoadingService) {
+        @Inject(MAT_DIALOG_DATA) course:Course,
+        private coursesStore: CoursesStore) {
 
         this.course = course;
 
@@ -43,10 +46,8 @@ export class CourseDialogComponent implements AfterViewInit {
     save() {
 
       const changes = this.form.value;
-      this.courseService.saveCourse(this.course.id, changes).subscribe(
-        val => this.dialogRef.close(val)
-      );
-
+      const saveCourse$ = this.coursesStore.saveCourse(this.course.id, changes).subscribe();
+      this.dialogRef.close(changes);
     }
 
     close() {
