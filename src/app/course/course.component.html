@@ -1,5 +1,5 @@
 
-  <div class="course">
+  <div class="course" *ngIf="(course$ | async) as course">
 
     <h2>{{course?.description}}</h2>
 
